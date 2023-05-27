@@ -11,16 +11,14 @@ import logging
 class ExcelReportPlugin():
     def __init__(self,
                  input_file,
-                 output_file, input_date
+                 output_file
                  ):
         self.input_file = input_file
         self.output_file = output_file
-        self.input_date = input_date
 
     def main(self):
         df = self.read_input_file()
-        df_filter = self.filter(df, self.input_date)
-        df_transform = self.transform(df_filter)
+        df_transform = self.transform(df)
         self.create_output_file(df_transform)
         print("workbook created")
 
@@ -44,15 +42,10 @@ class ExcelReportPlugin():
         return df
 
 
-    def filter(self, df:pd.DataFrame, input_date):
-        df_filter = df.loc[(df['Date'] == input_date)]
-        df_filter.head()
-        return df_filter
-
-
     def transform(self, df:pd.DataFrame) -> pd.DataFrame:
-        df_transform = df.pivot_table(index='Gender',
-                                    columns='Product line', 
+
+        df_transform = df.pivot_table(index=['Gender', 'Date'],
+                                    columns=['Product line'],
                                     values='Total', 
                                     aggfunc='sum').round()
         return df_transform
@@ -60,9 +53,8 @@ class ExcelReportPlugin():
 
     def create_output_file(self, df):
         print('Save dataframe to excel...')
-        df.to_excel(self.output_file, 
-                        sheet_name='Report', 
-                        startrow=4)
+        with pd.ExcelWriter(self.output_file, date_format='YYYY-MM-DD', datetime_format='YYYY-MM-DD') as writer:
+            df.to_excel(writer, sheet_name='Report', startrow=4)
         print(f'Save dataframe done... {self.output_file}')
 
 
@@ -79,7 +71,7 @@ class ExcelReportPlugin():
         barchart = BarChart()
 
         data = Reference(workbook, 
-                        min_col=min_column+1,
+                        min_col=min_column+2,
                         max_col=max_column,
                         min_row=min_row,
                         max_row=max_row
@@ -87,7 +79,7 @@ class ExcelReportPlugin():
 
         categories = Reference(workbook,
                                 min_col=min_column,
-                                max_col=min_column,
+                                max_col=min_column+1,
                                 min_row=min_row+1,
                                 max_row=max_row
                                 )
@@ -96,9 +88,11 @@ class ExcelReportPlugin():
         barchart.set_categories(categories)
 
 
-        workbook.add_chart(barchart, 'B12')
+        workbook.add_chart(barchart, 'J5')
         barchart.title = 'Sales berdasarkan Produk'
         barchart.style = 2
+        barchart.height = 15
+        barchart.width = 180
 
 
     def add_total(self, max_column, max_row, min_row, wb):
@@ -106,14 +100,14 @@ class ExcelReportPlugin():
         alphabet_excel = alphabet[:max_column]
         #[A,B,C,D,E,F,G]
         for i in alphabet_excel:
-            if i != 'A':
+            if i != 'A' and i != 'B':
                 wb[f'{i}{max_row+1}'] = f'=SUM({i}{min_row+1}:{i}{max_row})'
                 wb[f'{i}{max_row+1}'].style = 'Currency'
 
         wb[f'{alphabet_excel[0]}{max_row+1}'] = 'Total'
 
         wb['A1'] = 'Sales Report'
-        wb['A2'] = self.input_date
+        wb['A2'] = '2019'
         wb['A1'].font = Font('Arial', bold=True, size=20)
         wb['A2'].font = Font('Arial', bold=True, size=10)
 

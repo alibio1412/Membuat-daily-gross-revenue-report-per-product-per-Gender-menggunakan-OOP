@@ -8,6 +8,7 @@ setup(name='report',
         'numpy',
         'pandas',
         'openpyxl',
+        'xlsxwriter',
         'discord==1.7.3',
         'requests'
     ],)

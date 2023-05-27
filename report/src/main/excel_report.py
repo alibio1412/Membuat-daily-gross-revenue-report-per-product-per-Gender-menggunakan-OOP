@@ -9,7 +9,6 @@ print(f'base path: {base_path}')
 
 input_file = base_path + '/input_data/supermarket_sales.xlsx'
 output_file = base_path + '/output_data/report_penjualan_2019.xlsx'
-input_date = '2019-02-25'
 
 # Opening JSON file
 configs = open(base_path + '/configs/webhook.json')
@@ -17,8 +16,7 @@ webhook_url = json.load(configs)['webhook_url']
 
 automate = ExcelReportPlugin(
     input_file=input_file,
-    output_file=output_file, 
-    input_date=input_date
+    output_file=output_file
 )
 automate.main()
 send_to_discord(webhook_url, output_file)

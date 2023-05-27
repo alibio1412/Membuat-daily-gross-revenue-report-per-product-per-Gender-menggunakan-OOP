@@ -8,7 +8,7 @@ Disini kita bisa menggunakan Python untuk melakukan proses automasi pengiriman r
 ## Dataset
 Dataset yang akan digunakan adalah:
 https://www.kaggle.com/datasets/aungpyaeap/supermarket-sales. Data dari link berikut berupa .csv, kita bisa mengubahnya dulu menjadi excel atau kita bisa gunakan dataset yang tersedia pada repo ini.
-Dataset akan disaring untuk mengetahui gross revenue pada tanggal tertentu, misalnya 25 Februari 2019. Kita juga bisa mengetahui gross revenue di hari lain hanya dengan mengganti tanggal pada excel_report.py.
+Dataset akan disaring untuk mengetahui daily gross revenue selama Januari-Maret 2019.
 
 ## Layout
 ![alt text](images/layout.PNG)
